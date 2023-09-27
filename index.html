@@ -8,16 +8,31 @@
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/gruvbox.css">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<link rel="stylesheet" href="plugin/highlight/gruvbox.css">
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
 				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h1>Slide 2</h1>
+					<p>This <b>is</b> a thing that we learn every day about stuff</p>
+					<a>Hello</a>
+					<pre><code class="language-rust" data-trim data-noescape>
+						pub struct Note {
+							note_type: NoteType,
+							value_commitment: JubJubExtended,
+							nonce: BlsScalar,
+							stealth_address: StealthAddress,
+							encrypted_data: PoseidonCipher,
+							pos: u64,   // Position in the tree
+							index: u64, // Index of the tree (new field)
+						}
+                    </code></pre>
+				</section>
 			</div>
 		</div>
 

@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>π-crust</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
@@ -16,22 +16,18 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
 				<section>
-					<h1>Slide 2</h1>
-					<p>This <b>is</b> a thing that we learn every day about stuff</p>
-					<a>Hello</a>
-					<pre><code class="language-rust" data-trim data-noescape>
-						pub struct Note {
-							note_type: NoteType,
-							value_commitment: JubJubExtended,
-							nonce: BlsScalar,
-							stealth_address: StealthAddress,
-							encrypted_data: PoseidonCipher,
-							pos: u64,   // Position in the tree
-							index: u64, // Index of the tree (new field)
-						}
-                    </code></pre>
+					<h2>π-crust</h2>
+					Deterministic WASM virtual machine
+				</section>
+				<section>
+					<h3>Harvard Architecture</h3>
+					<section data-transition="fade">
+						<img alt="arch" src="images/arch.svg">
+					</section>
+					<section data-transition="fade">
+						<img alt="arch-done" src="images/arch-done.svg">
+					</section>
 				</section>
 			</div>
 		</div>
@@ -40,6 +36,7 @@
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/

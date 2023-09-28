@@ -29,6 +29,114 @@
 						<img alt="arch-done" src="images/arch-done.svg">
 					</section>
 				</section>
+				<section>
+					<img height="128em" alt="wasm" src="images/wasm.svg">
+					<section>
+						WebAssembly is a binary instruction format for a stack-based
+						virtual machine.
+					</section>
+                    <section data-transition="none">
+                        <br><br>
+                        <p>Imports and Exports</p>
+                        <pre><code data-trim data-noescape data-line-numbers="">
+                            (module
+                                (func $i (import "env" "import") (param i32))
+                                (func (export "call_import_with_42") (result i32)
+                                    i32.const 42
+                                    call $i
+                                )
+                                (func (export "add_to_42") (param i32) (result i32)
+                                    i32.const 42
+                                    i32.add
+                                )
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+                    </section>
+                    <section data-transition="none">
+						<br><br>
+						<p>Imports and Exports</p>
+                        <pre><code data-trim data-noescape data-line-numbers="2">
+                            (module
+                                (func $i (import "env" "import") (param i32))
+                                (func (export "call_import_with_42") (result i32)
+                                    i32.const 42
+                                    call $i
+                                )
+                                (func (export "add_to_42") (param i32) (result i32)
+                                    i32.const 42
+                                    i32.add
+                                )
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						<br><br>
+						<p>Imports and Exports</p>
+                        <pre><code data-trim data-noescape data-line-numbers="3-6">
+                            (module
+                                (func $i (import "env" "import") (param i32))
+                                (func (export "call_import_with_42") (result i32)
+                                    i32.const 42
+                                    call $i
+                                )
+                                (func (export "add_to_42") (param i32) (result i32)
+                                    i32.const 42
+                                    i32.add
+                                )
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						<br><br>
+						<p>Imports and Exports</p>
+                        <pre><code data-trim data-noescape data-line-numbers="7-10">
+                            (module
+                                (func $i (import "env" "import") (param i32))
+                                (func (export "call_import_with_42") (result i32)
+                                    i32.const 42
+                                    call $i
+                                )
+                                (func (export "add_to_42") (param i32) (result i32)
+                                    i32.const 42
+                                    i32.add
+                                )
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						<br><br>
+						<p>Imports and Exports</p>
+                        <pre><code data-trim data-noescape data-line-numbers="11">
+                            (module
+                                (func $i (import "env" "import") (param i32))
+                                (func (export "call_import_with_42") (result i32)
+                                    i32.const 42
+                                    call $i
+                                )
+                                (func (export "add_to_42") (param i32) (result i32)
+                                    i32.const 42
+                                    i32.add
+                                )
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+				</section>
+				<section>
+					<h3>Wasmer</h3>
+				</section>
+				<section>
+					<h3>4GB of Memory</h3>
+				</section>
+				<section>
+					<div>
+						<h3>Calling Convention</h3>
+					</div>
+				</section>
 			</div>
 		</div>
 

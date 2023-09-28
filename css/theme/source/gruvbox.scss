@@ -92,8 +92,8 @@ $mainColor: map.get($gb, "fg2");
 $headingColor: map.get($gb, "fg1");
 
 // Links and actions
-$linkColor: map.get($gb, "light-orange");
-$linkColorHover: map.get($gb, "dark-orange");
+$linkColor: map.get($gb, "dark-orange");
+$linkColorHover: map.get($gb, "light-orange");
 
 // Text selection
 $selectionBackgroundColor: map.get($gb, "bg4");

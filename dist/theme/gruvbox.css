@@ -27,9 +27,9 @@
   --r-heading3-size: 1.5em;
   --r-heading4-size: 1em;
   --r-code-font: Fira Code, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
-  --r-link-color: #af3a03;
-  --r-link-color-dark: #642102;
-  --r-link-color-hover: #d65d0e;
+  --r-link-color: #d65d0e;
+  --r-link-color-dark: #8e3e09;
+  --r-link-color-hover: #af3a03;
   --r-selection-background-color: #a89984;
   --r-selection-color: #3c3836;
 }

@@ -37,7 +37,7 @@
 					</section>
                     <section data-transition="none">
                         Imports and Exports
-                        <pre><code data-trim data-noescape>
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="">
                             (module
                                 (func $log (import "env" "log") (param i32 i32))
 
@@ -56,7 +56,7 @@
                     </section>
                     <section data-transition="none">
 						Imports and Exports
-                        <pre><code data-trim data-noescape data-line-numbers="2">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="2">
                             (module
                                 (func $log (import "env" "log") (param i32 i32))
 
@@ -75,7 +75,7 @@
 					</section>
 					<section data-transition="none">
 						Imports and Exports
-                        <pre><code data-trim data-noescape data-line-numbers="4-6">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="4-6">
                             (module
                                 (func $log (import "env" "log") (param i32 i32))
 
@@ -94,7 +94,7 @@
                     </section>
 					<section data-transition="none">
 						Imports and Exports
-                        <pre><code data-trim data-noescape data-line-numbers="7-13">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="7-13">
                             (module
                                 (func $log (import "env" "log") (param i32 i32))
 
@@ -113,7 +113,7 @@
 					</section>
 					<section data-transition="none">
 						Memory Definition
-                        <pre><code data-trim data-noescape data-line-numbers="2-3,13">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="2-3,13">
                             (module
                                 (memory $memory 1)
                                 (export "memory" (memory $memory))
@@ -132,7 +132,7 @@
 					</section>
 					<section data-transition="none">
 						Loads and Stores
-                        <pre><code data-trim data-noescape data-line-numbers="4-12">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="4-12">
                             (module
                                 (memory $memory 1)
                                 (export "memory" (memory $memory))
@@ -151,7 +151,7 @@
 					</section>
 					<section data-transition="none">
 						Size and Growth
-                        <pre><code data-trim data-noescape data-line-numbers="5-11">
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="5-11">
                             (module
                                 (memory $memory 1)
                                 (export "memory" (memory $memory))
@@ -201,7 +201,8 @@
                     <section data-transition="none">
                         <br>
                         <br>
-                        <pre><code data-trim data-noescape>
+                        <pre><code class="language-wasm" data-trim data-noescape>
+                                                      (; WAT ;)
                             (func (export "increment")
                                 i32.const 0
                                 i32.const 0
@@ -211,8 +212,9 @@
                                 i32.store
                             )
                         </code></pre>
-                            <pre><code data-trim data-noescape>
-                            increment:                   ; Firefox x86
+                        <pre><code class="language-x86asm" data-trim data-noescape>
+                                                   ; Firefox x86 ;
+                            increment:
                                 sub rsp, 8               ; 0x000000 48 83 ec 08
                                 mov eax, dword ptr [r15] ; 0x000004 41 8b 07
                                 add eax, 1               ; 0x000007 83 c0 01

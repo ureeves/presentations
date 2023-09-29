@@ -40,14 +40,16 @@
                         <p>Imports and Exports</p>
                         <pre><code data-trim data-noescape data-line-numbers="">
                             (module
-                                (func $i (import "env" "import") (param i32))
-                                (func (export "call_import_with_42") (result i32)
+                                (func $ga (import "env" "give_answer") (param i32))
+                                (func $log (import "env" "log") (param i32 i32))
+                                (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $i
+                                    call $ga
                                 )
-                                (func (export "add_to_42") (param i32) (result i32)
-                                    i32.const 42
-                                    i32.add
+                                (func (export "log_hi") (param i32) (result i32)
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
                                 )
                                 (data (i32.const 0) "Hi")
                             )
@@ -56,16 +58,18 @@
                     <section data-transition="none">
 						<br><br>
 						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="2">
+                        <pre><code data-trim data-noescape data-line-numbers="2-3">
                             (module
-                                (func $i (import "env" "import") (param i32))
-                                (func (export "call_import_with_42") (result i32)
+                                (func $ga (import "env" "give_answer") (param i32))
+                                (func $log (import "env" "log") (param i32 i32))
+                                (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $i
+                                    call $ga
                                 )
-                                (func (export "add_to_42") (param i32) (result i32)
-                                    i32.const 42
-                                    i32.add
+                                (func (export "log_hi") (param i32) (result i32)
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
                                 )
                                 (data (i32.const 0) "Hi")
                             )
@@ -74,16 +78,18 @@
 					<section data-transition="none">
 						<br><br>
 						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="3-6">
+                        <pre><code data-trim data-noescape data-line-numbers="4-7">
                             (module
-                                (func $i (import "env" "import") (param i32))
-                                (func (export "call_import_with_42") (result i32)
+                                (func $ga (import "env" "give_answer") (param i32))
+                                (func $log (import "env" "log") (param i32 i32))
+                                (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $i
+                                    call $ga
                                 )
-                                (func (export "add_to_42") (param i32) (result i32)
-                                    i32.const 42
-                                    i32.add
+                                (func (export "log_hi") (param i32) (result i32)
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
                                 )
                                 (data (i32.const 0) "Hi")
                             )
@@ -92,34 +98,18 @@
 					<section data-transition="none">
 						<br><br>
 						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="7-10">
+                        <pre><code data-trim data-noescape data-line-numbers="8-13">
                             (module
-                                (func $i (import "env" "import") (param i32))
-                                (func (export "call_import_with_42") (result i32)
+                                (func $ga (import "env" "give_answer") (param i32))
+                                (func $log (import "env" "log") (param i32 i32))
+                                (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $i
+                                    call $ga
                                 )
-                                (func (export "add_to_42") (param i32) (result i32)
-                                    i32.const 42
-                                    i32.add
-                                )
-                                (data (i32.const 0) "Hi")
-                            )
-                        </code></pre>
-					</section>
-					<section data-transition="none">
-						<br><br>
-						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="11">
-                            (module
-                                (func $i (import "env" "import") (param i32))
-                                (func (export "call_import_with_42") (result i32)
-                                    i32.const 42
-                                    call $i
-                                )
-                                (func (export "add_to_42") (param i32) (result i32)
-                                    i32.const 42
-                                    i32.add
+                                (func (export "log_hi") (param i32) (result i32)
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
                                 )
                                 (data (i32.const 0) "Hi")
                             )

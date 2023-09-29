@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>π-crust</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/gruvbox.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/gruvbox.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>π-crust</h2>
+					Deterministic WASM virtual machine
+				</section>
+				<section>
+					<h3>Harvard Architecture</h3>
+					<section data-transition="fade">
+						<img alt="arch" src="images/arch.svg">
+					</section>
+					<section data-transition="fade">
+						<img alt="arch-done" src="images/arch-done.svg">
+					</section>
+				</section>
+				<section>
+					<img width="64em" alt="wasm" src="images/wasm.svg">
+					<section>
+						WebAssembly is a binary instruction format for a stack-based
+						virtual machine.
+					</section>
+                    <section data-transition="none">
+                        Imports and Exports
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="">
+                            (module
+                                (func $log (import "env" "log") (param i32 i32))
+
+                                (func (export "answer") (result i32)
+                                    i32.const 42
+                                )
+                                (func (export "log_hi")
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
+                                )
+
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+                    </section>
+                    <section data-transition="none">
+						Imports and Exports
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="2">
+                            (module
+                                (func $log (import "env" "log") (param i32 i32))
+
+                                (func (export "answer") (result i32)
+                                    i32.const 42
+                                )
+                                (func (export "log_hi")
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
+                                )
+
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Imports and Exports
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="4-6">
+                            (module
+                                (func $log (import "env" "log") (param i32 i32))
+
+                                (func (export "answer") (result i32)
+                                    i32.const 42
+                                )
+                                (func (export "log_hi")
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
+                                )
+
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+                    </section>
+					<section data-transition="none">
+						Imports and Exports
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="7-13">
+                            (module
+                                (func $log (import "env" "log") (param i32 i32))
+
+                                (func (export "answer") (result i32)
+                                    i32.const 42
+                                )
+                                (func (export "log_hi")
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
+                                )
+
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Memory Definition
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="2-3,13">
+                            (module
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+                                (func (export "increment")
+                                    i32.const 0
+                                    i32.const 0
+                                    i32.load
+                                    i32.const 4
+                                    i32.load
+                                    i32.add
+                                    i32.store
+                                )
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Loads and Stores
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="4-12">
+                            (module
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+                                (func (export "increment")
+                                    i32.const 0
+                                    i32.const 0
+                                    i32.load
+                                    i32.const 4
+                                    i32.load
+                                    i32.add
+                                    i32.store
+                                )
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Size and Growth
+                        <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="5-11">
+                            (module
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+
+                                (func (export "grow" (param i32) (result i32)
+                                    local.get 0
+                                    memory.grow
+                                )
+                                (func (export "size" (result i32)
+                                    memory.size
+                                )
+
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
+                            )
+                        </code></pre>
+					</section>
+				</section>
+				<section>
+                    <img width="256em" alt="wasm" src="images/wasmer.svg">
+                    <section data-transition="fade">
+                        🚀 The leading WebAssembly Runtime supporting WASIX, WASI and Emscripten
+                    </section>
+                    <section data-transition="fade">
+                        <h3>Features</h3>
+                        <ul>
+                            <li class="fragment fade-up"><b>Secure</b> by default. No file, network, or environment access, unless explicitly enabled.</li>
+                            <li class="fragment fade-up"><b>Fast</b>. Run WebAssembly at near-native speeds.</li>
+                            <li class="fragment fade-up"><b>Pluggable</b>. Embeddable in multiple programming languages.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="fade-in none-out">
+                        <h3>Native Backends</h3>
+                        <ul>
+                            <li class="fragment fade-up"><b>Singlepass</b>: A single-pass compiler for fast compilation times and low memory usage.</li>
+                            <li class="fragment fade-up"><b>Cranelift</b>: A fast compiler backend with a focus on compile times, and runtime performance.</li>
+                            <li class="fragment fade-up"><b>LLVM</b>: A compiler backend that uses LLVM for optimization and code generation.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="none">
+                        <h3>Native Backends</h3>
+                        <ul>
+                            <li><b><u>Singlepass</u></b>: A single-pass compiler for fast compilation times and low memory usage.</li>
+                            <li><b>Cranelift</b>: A fast compiler backend with a focus on compile times, and runtime performance.</li>
+                            <li><b>LLVM</b>: A compiler backend that uses LLVM for optimization and code generation.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="none">
+                        <br>
+                        <br>
+                        <pre><code class="language-wasm" data-trim data-noescape>
+                                                      (; WAT ;)
+                            (func (export "increment")
+                                i32.const 0
+                                i32.const 0
+                                i32.load
+                                i32.const 1
+                                i32.add
+                                i32.store
+                            )
+                        </code></pre>
+                        <pre><code class="language-x86asm" data-trim data-noescape>
+                                                   ; Firefox x86 ;
+                            increment:
+                                sub rsp, 8               ; 0x000000 48 83 ec 08
+                                mov eax, dword ptr [r15] ; 0x000004 41 8b 07
+                                add eax, 1               ; 0x000007 83 c0 01
+                                mov dword ptr [r15], eax ; 0x00000a 41 89 07
+                                nop                      ; 0x00000d 66 90
+                                add rsp, 8               ; 0x00000f 48 83 c4 08
+                                ret                      ; 0x000013 c3
+                        </code></pre>
+                    </section>
+                </section>
+				<section>
+					<div>
+						<h3>Calling Convention</h3>
+					</div>
+				</section>
+                <section>
+                    <h3>4GB of Memory</h3>
+                </section>
+            </div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,16 @@
+@media screen and (max-width: 1025px) {
+    .mobile-hide {
+        display: none;
+    }
+}
+
+.qr-container {
+    position: relative;
+}
+
+.qr {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 10em;
+}

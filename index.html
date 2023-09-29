@@ -37,7 +37,7 @@
 					</section>
                     <section data-transition="none">
                         Imports and Exports
-                        <pre><code data-trim data-noescape data-line-numbers="">
+                        <pre><code data-trim data-noescape>
                             (module
                                 (func $log (import "env" "log") (param i32 i32))
 
@@ -171,16 +171,67 @@
 				</section>
 				<section>
                     <img width="256em" alt="wasm" src="images/wasmer.svg">
-				</section>
-				<section>
-					<h3>4GB of Memory</h3>
-				</section>
+                    <section data-transition="fade">
+                        🚀 The leading WebAssembly Runtime supporting WASIX, WASI and Emscripten
+                    </section>
+                    <section data-transition="fade">
+                        <h3>Features</h3>
+                        <ul>
+                            <li class="fragment fade-up"><b>Secure</b> by default. No file, network, or environment access, unless explicitly enabled.</li>
+                            <li class="fragment fade-up"><b>Fast</b>. Run WebAssembly at near-native speeds.</li>
+                            <li class="fragment fade-up"><b>Pluggable</b>. Embeddable in multiple programming languages.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="fade-in none-out">
+                        <h3>Native Backends</h3>
+                        <ul>
+                            <li class="fragment fade-up"><b>Singlepass</b>: A single-pass compiler for fast compilation times and low memory usage.</li>
+                            <li class="fragment fade-up"><b>Cranelift</b>: A fast compiler backend with a focus on compile times, and runtime performance.</li>
+                            <li class="fragment fade-up"><b>LLVM</b>: A compiler backend that uses LLVM for optimization and code generation.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="none">
+                        <h3>Native Backends</h3>
+                        <ul>
+                            <li><b><u>Singlepass</u></b>: A single-pass compiler for fast compilation times and low memory usage.</li>
+                            <li><b>Cranelift</b>: A fast compiler backend with a focus on compile times, and runtime performance.</li>
+                            <li><b>LLVM</b>: A compiler backend that uses LLVM for optimization and code generation.</li>
+                        </ul>
+                    </section>
+                    <section data-transition="none">
+                        <br>
+                        <br>
+                        <pre><code data-trim data-noescape>
+                            (func (export "increment")
+                                i32.const 0
+                                i32.const 0
+                                i32.load
+                                i32.const 1
+                                i32.add
+                                i32.store
+                            )
+                        </code></pre>
+                            <pre><code data-trim data-noescape>
+                            increment:                   ; Firefox x86
+                                sub rsp, 8               ; 0x000000 48 83 ec 08
+                                mov eax, dword ptr [r15] ; 0x000004 41 8b 07
+                                add eax, 1               ; 0x000007 83 c0 01
+                                mov dword ptr [r15], eax ; 0x00000a 41 89 07
+                                nop                      ; 0x00000d 66 90
+                                add rsp, 8               ; 0x00000f 48 83 c4 08
+                                ret                      ; 0x000013 c3
+                        </code></pre>
+                    </section>
+                </section>
 				<section>
 					<div>
 						<h3>Calling Convention</h3>
 					</div>
 				</section>
-			</div>
+                <section>
+                    <h3>4GB of Memory</h3>
+                </section>
+            </div>
 		</div>
 
 		<script src="dist/reveal.js"></script>

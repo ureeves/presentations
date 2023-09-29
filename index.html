@@ -30,88 +30,141 @@
 					</section>
 				</section>
 				<section>
-					<img height="128em" alt="wasm" src="images/wasm.svg">
-					<section>
+					<img width="64em" alt="wasm" src="images/wasm.svg">
+					<section style="padding-top: 100px">
 						WebAssembly is a binary instruction format for a stack-based
 						virtual machine.
 					</section>
                     <section data-transition="none">
-                        <br><br>
-                        <p>Imports and Exports</p>
+                        Imports and Exports
                         <pre><code data-trim data-noescape data-line-numbers="">
                             (module
-                                (func $ga (import "env" "give_answer") (param i32))
                                 (func $log (import "env" "log") (param i32 i32))
+
                                 (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $ga
                                 )
-                                (func (export "log_hi") (param i32) (result i32)
+                                (func (export "log_hi")
                                     i32.const 0
                                     i32.const 2
                                     call $log
                                 )
+
                                 (data (i32.const 0) "Hi")
                             )
                         </code></pre>
                     </section>
                     <section data-transition="none">
-						<br><br>
-						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="2-3">
+						Imports and Exports
+                        <pre><code data-trim data-noescape data-line-numbers="2">
                             (module
-                                (func $ga (import "env" "give_answer") (param i32))
                                 (func $log (import "env" "log") (param i32 i32))
+
                                 (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $ga
                                 )
-                                (func (export "log_hi") (param i32) (result i32)
+                                (func (export "log_hi")
                                     i32.const 0
                                     i32.const 2
                                     call $log
                                 )
+
                                 (data (i32.const 0) "Hi")
                             )
                         </code></pre>
 					</section>
 					<section data-transition="none">
-						<br><br>
-						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="4-7">
+						Imports and Exports
+                        <pre><code data-trim data-noescape data-line-numbers="4-6">
                             (module
-                                (func $ga (import "env" "give_answer") (param i32))
                                 (func $log (import "env" "log") (param i32 i32))
+
                                 (func (export "answer") (result i32)
                                     i32.const 42
-                                    call $ga
                                 )
-                                (func (export "log_hi") (param i32) (result i32)
+                                (func (export "log_hi")
                                     i32.const 0
                                     i32.const 2
                                     call $log
                                 )
+
+                                (data (i32.const 0) "Hi")
+                            )
+                        </code></pre>
+                    </section>
+					<section data-transition="none">
+						Imports and Exports
+                        <pre><code data-trim data-noescape data-line-numbers="7-13">
+                            (module
+                                (func $log (import "env" "log") (param i32 i32))
+
+                                (func (export "answer") (result i32)
+                                    i32.const 42
+                                )
+                                (func (export "log_hi")
+                                    i32.const 0
+                                    i32.const 2
+                                    call $log
+                                )
+
                                 (data (i32.const 0) "Hi")
                             )
                         </code></pre>
 					</section>
 					<section data-transition="none">
-						<br><br>
-						<p>Imports and Exports</p>
-                        <pre><code data-trim data-noescape data-line-numbers="8-13">
+						Memory Definition
+                        <pre><code data-trim data-noescape data-line-numbers="2-3,13">
                             (module
-                                (func $ga (import "env" "give_answer") (param i32))
-                                (func $log (import "env" "log") (param i32 i32))
-                                (func (export "answer") (result i32)
-                                    i32.const 42
-                                    call $ga
-                                )
-                                (func (export "log_hi") (param i32) (result i32)
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+                                (func (export "increment")
                                     i32.const 0
-                                    i32.const 2
-                                    call $log
+                                    i32.const 0
+                                    i32.load
+                                    i32.const 4
+                                    i32.load
+                                    i32.add
+                                    i32.store
                                 )
-                                (data (i32.const 0) "Hi")
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Loads and Stores
+                        <pre><code data-trim data-noescape data-line-numbers="4-12">
+                            (module
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+                                (func (export "increment")
+                                    i32.const 0
+                                    i32.const 0
+                                    i32.load
+                                    i32.const 4
+                                    i32.load
+                                    i32.add
+                                    i32.store
+                                )
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
+                            )
+                        </code></pre>
+					</section>
+					<section data-transition="none">
+						Size and Growth
+                        <pre><code data-trim data-noescape data-line-numbers="">
+                            (module
+                                (memory $memory 1)
+                                (export "memory" (memory $memory))
+
+                                (func (export "grow" (param i32) (result i32)
+                                    local.get 0
+                                    memory.grow
+                                )
+                                (func (export "size" (result i32)
+                                    memory.size
+                                )
+
+                                (data (i32.const 0) "\00\00\00\00\01\00\00\00")
                             )
                         </code></pre>
 					</section>

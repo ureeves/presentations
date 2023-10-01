@@ -232,8 +232,9 @@
         </section>
         <section>
             <h3>Calling Convention</h3>
-            <section></section>
-            <section data-transition="none">
+            <section>
+            </section>
+            <section data-transition="fade">
                 <h4>Questions</h4>
                 <ul>
                     <li class="fragment fade-up">What imports does the VM offer?</li>
@@ -249,9 +250,113 @@
                 <img alt="argbuf-inv" src="images/argbuf-inv.svg">
             </section>
             <section data-transition="fade">
+                <h4>Exports</h4>
+
+                <pre><code class="language-rust" data-trim data-noescape>
+                    fn correct(arg_len: u32) -> u32 {
+                        todo!()
+                    }
+
+                    fn incorrect(arg_len: u32, no: u8) -> u32 {
+                        todo!()
+                    }
+
+                    fn also_incorrect(arg_len: u32) -> u64 {
+                        todo!()
+                    }
+                </code></pre>
+            </section>
+            <section data-transition="none">
                 <h4>Imports</h4>
 
-                <pre><code class="language-rust" data-trim data-noescape data-line-numbers="">
+                <pre><code class="language-rust" data-trim data-noescape>
+                    //! Fixed size returns
+
+                    /// Emplaces the caller of the contract into the arg buffer.
+                    fn caller();
+
+                    /// Emplaces the ID of the calling contract into the arg
+                    /// buffer.
+                    fn self_id();
+
+                    /// Emplaces the owner of the calling contract into the arg
+                    /// buffer.
+                    fn owner();
+                </code></pre>
+            </section>
+            <section data-transition="none">
+                <h4>Imports</h4>
+
+                <pre><code class="language-rust" data-trim data-noescape>
+                    //! Host data and host queries
+
+                    /// Emplaces the result of executing a host query with the
+                    /// given arguments to the arg buffer.
+                    ///
+                    /// This allows for defining some additional functionality
+                    /// downstream in rusk - `verify_proof` is a good example.
+                    fn hq(name: *const u8, name_len: u32, arg_len: u32) -> u32;
+
+                    /// Emplaces some metadata provided by the host into the
+                    /// argument buffer.
+                    fn hd(name: *const u8, name_len: u32) -> u32;
+                </code></pre>
+            </section>
+            <section data-transition="none">
+                <br><br>
+                <h4>Imports</h4>
+                <pre><code class="language-rust" data-trim data-noescape>
+                    /// Calls another contract's export with the an argument
+                    /// with the given length in the arg buffer.
+                    fn c(
+                        contract_id: *const u8,
+                        fn_name: *const u8,
+                        fn_name_len: u32,
+                        fn_arg_len: u32,
+                        points_limit: u64,
+                    ) -> i32;
+                </code></pre>
+                <img alt="contract-call" src="images/contract-call.svg">
+            </section>
+            <section data-transition="none">
+                <h4>Imports</h4>
+                <pre><code class="language-rust" data-trim data-noescape>
+                    //! Events and feeds
+
+                    /// Emits an event with the given topic and argument - for
+                    /// when the contract want to inform external applications.
+                    fn emit(topic: *const u8, topic_len: u32, arg_len: u32);
+
+                    /// Feeds the given argument to the contract - for when the
+                    /// host needs to take more data than allowed by the arg
+                    /// buffer.
+                    fn feed(arg_len: u32);
+                </code></pre>
+            </section>
+            <section data-transition="none">
+                <h4>Imports</h4>
+                <pre><code class="language-rust" data-trim data-noescape>
+                    //! Points - related to instruction metering
+
+                    /// The set execution points limit for this call.
+                    fn limit() -> u64;
+
+                    /// The number of execution points spent so far.
+                    fn spent() -> u64;
+                </code></pre>
+            </section>
+            <section data-transition="none">
+                <h4>Imports</h4>
+                <pre><code class="language-rust" data-trim data-noescape>
+                    //! Debugging
+
+                    /// Logs the argument to STDOUT.
+                    ///
+                    /// Only available with the `debug` feature.
+                    fn hdebug(arg_len: u32);
+
+                    /// Allows the contract to signal a panic to the host.
+                    fn panic(arg_len: u32);
                 </code></pre>
             </section>
         </section>

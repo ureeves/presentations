@@ -16,7 +16,7 @@
 @import url(./fonts/sohne-mono/sohne-mono.css);
 
 $dusk: (
-        // Primary palette
+  // Primary palette
         smoky-black: #101010,
         black-beauty: #27272a,
         light-gray: #e2dfe9,
@@ -25,15 +25,13 @@ $dusk: (
         baltic-blue: #7ab6d9,
         magnolia: #edeaf3,
         snow-white: #f2f0eb,
-
-        // Secondary palette
+  // Secondary palette
         jet: #2e2d30,
         granite-gray: #636167,
         taupe-gray: #908e94,
         silver-metalic: #a8a5af,
-        white: #ffffff,
-
-        // Accent palette
+        plain-white: #ffffff,
+  // Accent palette
         light-red: #f04367,
         red: #ed254e,
         dark-red: #ca2143,
@@ -44,3 +42,33 @@ $dusk: (
         yellow: #ffcf23,
         dark-yellow: #efc120,
 );
+
+$backgroundColor: map.get($dusk, "smoky-black");
+$mainFont: "Sohne", sans-serif;
+$mainFontSize: 42px;
+$mainColor: map.get($dusk, "snow-white");
+$blockMargin: 20px;
+$headingMargin: 0 0 $blockMargin 0;
+$headingFont: $mainFont;
+$headingColor: map.get($dusk, "cornflower-blue");
+$headingLineHeight: 1.2;
+$headingLetterSpacing: normal;
+$headingTextTransform: none;
+$headingTextShadow: none;
+$headingFontWeight: 600;
+$heading1TextShadow: $headingTextShadow;
+$heading1Size: 3.0em;
+$heading2Size: 2.0em;
+$heading3Size: 1.5em;
+$heading4Size: 1.0em;
+$codeFont: "Sohne Mono", monospace;
+$linkColor: map.get($dusk, "baltic-blue");
+$linkColorHover: lighten($linkColor, 20%);
+$selectionBackgroundColor: map.get($dusk, "taupe-gray");
+$selectionColor: $mainColor;
+$overlayElementBgColor: map.get($dusk, "silver-metalic");
+$overlayElementFgColor: $mainColor;
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------

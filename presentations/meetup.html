@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Fault-Driven Memory Tracking</title>
+
+    <link rel="stylesheet" href="../dist/reset.css">
+    <link rel="stylesheet" href="../dist/reveal.css">
+    <link rel="stylesheet" href="../dist/custom.css">
+    <link rel="stylesheet" href="../dist/theme/dusk.css">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="../plugin/highlight/gruvbox.css">
+</head>
+<body>
+<div class="qr-container mobile-hide" style="position: relative">
+    <img class="qr" alt="qr" src="../images/meetup-qr.svg">
+</div>
+
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <h2>Fault-Driven Memory Tracking</h2>
+            <p>Segfaults ain't all bad</p>
+        </section>
+        <section>
+                            <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="">
+                    (module
+                        (func $log (import "env" "log") (param i32 i32))
+
+                        (func (export "answer") (result i32)
+                            i32.const 42
+                        )
+                        (func (export "log_hi")
+                            i32.const 0
+                            i32.const 2
+                            call $log
+                        )
+
+                        (data (i32.const 0) "Hi")
+                    )
+                </code></pre>
+
+        </section>
+    </div>
+</div>
+
+<script src="../dist/reveal.js"></script>
+<script src="../plugin/notes/notes.js"></script>
+<script src="../plugin/markdown/markdown.js"></script>
+<script src="../plugin/highlight/highlight.js"></script>
+
+<script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+</script>
+</body>
+</html>

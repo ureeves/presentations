@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="../dist/theme/dusk.css">
 
     <!-- Theme used for syntax highlighted code -->
-    <link rel="stylesheet" href="../plugin/highlight/gruvbox.css">
+    <link rel="stylesheet" href="../plugin/highlight/dusk.css">
 </head>
 <body>
 <div class="qr-container mobile-hide" style="position: relative">
@@ -24,25 +24,25 @@
         <section>
             <h2>Fault-Driven Memory Tracking</h2>
             <p>Segfaults ain't all bad</p>
-        </section>
-        <section>
-                            <pre><code class="language-wasm" data-trim data-noescape data-line-numbers="">
-                    (module
-                        (func $log (import "env" "log") (param i32 i32))
+            <pre><code class="language-rust" data-trim data-noescape>
+                struct Mmap&ltT: Zeroable&gt {
+                    ptr: *mut u8,
+                    len: usize,
+                }
 
-                        (func (export "answer") (result i32)
-                            i32.const 42
-                        )
-                        (func (export "log_hi")
-                            i32.const 0
-                            i32.const 2
-                            call $log
-                        )
+                /// This is a trait for stuff in [`Mmap`]
+                trait Zeroable {
+                    fn zero(&mut self);
+                }
 
-                        (data (i32.const 0) "Hi")
-                    )
-                </code></pre>
-
+                impl Zeroable for Mmap {
+                    fn zero(&mut self) {
+                        unsafe {
+                            libc::memset(self.ptr as *mut c_void, 0, self.len);
+                        }
+                    }
+                }
+            </code></pre>
         </section>
     </div>
 </div>

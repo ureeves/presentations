@@ -1,0 +1,46 @@
+/**
+ * Dusk theme for reveal.js.
+ *
+ * By Eduardo Leegwater Simões
+ */
+
+@use "sass:map";
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+// Include theme-specific fonts
+@import url(./fonts/sohne/sohne.css);
+@import url(./fonts/sohne-mono/sohne-mono.css);
+
+$dusk: (
+        // Primary palette
+        smoky-black: #101010,
+        black-beauty: #27272a,
+        light-gray: #e2dfe9,
+        barely-blue: #dde0df,
+        cornflower-blue: #71b1ff,
+        baltic-blue: #7ab6d9,
+        magnolia: #edeaf3,
+        snow-white: #f2f0eb,
+
+        // Secondary palette
+        jet: #2e2d30,
+        granite-gray: #636167,
+        taupe-gray: #908e94,
+        silver-metalic: #a8a5af,
+        white: #ffffff,
+
+        // Accent palette
+        light-red: #f04367,
+        red: #ed254e,
+        dark-red: #ca2143,
+        light-green: #28e6a1,
+        green: #16db93,
+        dark-green: #17d28e,
+        light-yellow: #ffdc60,
+        yellow: #ffcf23,
+        dark-yellow: #efc120,
+);

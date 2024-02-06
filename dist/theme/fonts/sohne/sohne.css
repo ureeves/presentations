@@ -1,0 +1,87 @@
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-leicht.eot');
+    src: url('./sohne-leicht.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-leicht.woff2') format('woff2'),
+    url('./sohne-leicht.woff') format('woff'),
+    url('./sohne-leicht.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-leicht-kursiv.eot');
+    src: url('./sohne-leicht-kursiv.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-leicht-kursiv.woff2') format('woff2'),
+    url('./sohne-leicht-kursiv.woff') format('woff'),
+    url('./sohne-leicht-kursiv.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-buch.eot');
+    src: url('./sohne-buch.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-buch.woff2') format('woff2'),
+    url('./sohne-buch.woff') format('woff'),
+    url('./sohne-buch.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-buch-kursiv.eot');
+    src: url('./sohne-buch-kursiv.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-buch-kursiv.woff2') format('woff2'),
+    url('./sohne-buch-kursiv.woff') format('woff'),
+    url('./sohne-buch-kursiv.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-halbfett.eot');
+    src: url('./sohne-halbfett.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-halbfett.woff2') format('woff2'),
+    url('./sohne-halbfett.woff') format('woff'),
+    url('./sohne-halbfett.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-halbfett-kursiv.eot');
+    src: url('./sohne-halbfett-kursiv.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-halbfett-kursiv.woff2') format('woff2'),
+    url('./sohne-halbfett-kursiv.woff') format('woff'),
+    url('./sohne-halbfett-kursiv.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-fett.eot');
+    src: url('./sohne-fett.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-fett.woff2') format('woff2'),
+    url('./sohne-fett.woff') format('woff'),
+    url('./sohne-fett.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-fett-kursiv.eot');
+    src: url('./sohne-fett-kursiv.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-fett-kursiv.woff2') format('woff2'),
+    url('./sohne-fett-kursiv.woff') format('woff'),
+    url('./sohne-fett-kursiv.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}

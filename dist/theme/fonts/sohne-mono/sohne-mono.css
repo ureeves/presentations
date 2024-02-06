@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-mono-buch.eot');
+    src: url('./sohne-mono-buch.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-mono-buch.woff2') format('woff2'),
+    url('./sohne-mono-buch.woff') format('woff'),
+    url('./sohne-mono-buch.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sohne';
+    src: url('./sohne-mono-kraftig.eot');
+    src: url('./sohne-mono-kraftig.eot?#iefix') format('embedded-opentype'),
+    url('./sohne-mono-kraftig.woff2') format('woff2'),
+    url('./sohne-mono-kraftig.woff') format('woff'),
+    url('./sohne-mono-kraftig.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}

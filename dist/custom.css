@@ -14,3 +14,48 @@
     right: 0;
     height: 10em;
 }
+
+#intro {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#contact-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    font-weight: normal;
+    font-size: 0.7em;
+    margin-bottom: 0.5em;
+}
+
+.contact-link {
+    width: 1em;
+    margin-right: 0.5em;
+}
+
+.contact-link img {
+    margin: 0 !important;
+}
+
+#company-logos {
+    display: flex;
+    justify-content: space-around;
+    vertical-align: top;
+}
+
+#contact-logo-dusk {
+    width: 50%;
+}
+
+#contact-logo-rust {
+    width: 30%;
+}

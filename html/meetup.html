@@ -22,27 +22,35 @@
 <div class="reveal">
     <div class="slides">
         <section>
-            <h2>Fault-Driven Memory Tracking</h2>
-            <p>Segfaults ain't all bad</p>
-            <pre><code class="language-rust" data-trim data-noescape>
-                struct Mmap&ltT: Zeroable&gt {
-                    ptr: *mut u8,
-                    len: usize,
-                }
+            <section>
+                <h3>Fault-Driven Memory Tracking</h3>
+                <p>Segfaults ain't all bad</p>
+            </section>
+            <section>
+                <div id=intro>
+                    <div id=contact-info>
+                        <div class=contact-row>
+                            Eduardo Leegwater Simões
+                        </div>
+                        <div class=contact-row>
+                            Software Engineer
+                        </div>
+                        <div class=contact-row>
+                            <a class=contact-link href="https://www.linkedin.com/in/eduardo-leegwater-sim%C3%B5es" target="_blank">
+                                <img src="../images/linkedin-logo.svg" alt="linkedin">
+                            </a>
+                            <a class=contact-link href="https://github.com/ureeves" target="_blank">
+                                <img src="../images/github-logo.svg" alt="github">
+                            </a>
+                        </div>
+                    </div>
 
-                /// This is a trait for stuff in [`Mmap`]
-                trait Zeroable {
-                    fn zero(&mut self);
-                }
-
-                impl Zeroable for Mmap {
-                    fn zero(&mut self) {
-                        unsafe {
-                            libc::memset(self.ptr as *mut c_void, 0, self.len);
-                        }
-                    }
-                }
-            </code></pre>
+                    <div id=company-logos>
+                        <img id=contact-logo-dusk src="../images/dusk-logo.svg" alt="dusk">
+                        <img id=contact-logo-rust src="../images/rust-logo.png" alt="rust">
+                    </div>
+                </div>
+            </section>
         </section>
     </div>
 </div>

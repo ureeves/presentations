@@ -85,13 +85,13 @@
             <section>
                 <p class=syscall-title>mmap(), munmap()</p>
                 <p class=syscall-description>map or unmap files or devices into memory</p>
-                <pre><code data-trim data-noescape>
-                #include &ltsys/mman.h&gt
+                <pre><code lang=c data-trim data-noescape>
+                    #include &ltsys/mman.h&gt
 
-                void *mmap(void addr[.length], size_t length, int prot,
-                           int flags, int fd, off_t offset);
+                    void *mmap(void addr[.length], size_t length, int prot,
+                               int flags, int fd, off_t offset);
 
-                int munmap(void addr[.length], size_t length);
+                    int munmap(void addr[.length], size_t length);
                 </code></pre>
             </section>
             <section data-transition=slide-in>
@@ -125,23 +125,23 @@
             <section>
                 <p class=syscall-title>sigaction()</p>
                 <p class=syscall-description>examine and change a signal action</p>
-                <pre><code data-trim data-noescape>
-                #include &ltsignal.h&gt
+                <pre><code lang=c data-trim data-noescape>
+                    #include &ltsignal.h&gt
 
-                int sigaction(
-                    int signum,
-                    const struct sigaction *_Nullable restrict act,
-                    struct sigaction *_Nullable restrict oldact
-                );
+                    int sigaction(
+                        int signum,
+                        const struct sigaction *_Nullable restrict act,
+                        struct sigaction *_Nullable restrict oldact
+                    );
                 </code></pre>
             </section>
             <section>
                 <p class=syscall-title>mprotect()</p>
                 <p class=syscall-description>set protection on a region of memory</p>
-                <pre><code data-trim data-noescape>
-                #include &ltsys/mman.h&gt
+                <pre><code lang=c data-trim data-noescape>
+                    #include &ltsys/mman.h&gt
 
-                int mprotect(void addr[.len], size_t len, int prot);
+                    int mprotect(void addr[.len], size_t len, int prot);
                 </code></pre>
             </section>
             <section>
@@ -153,6 +153,57 @@
                     <li class="fragment stategy-item">Mark memory region as written</li>
                     <li class="fragment stategy-item">Allow writing to the memory region</li>
                 </ol>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Let's Code</h3>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    struct Mmap&ltT&gt {
+                        ptr: *mut T,
+                        len: usize,
+                        padded_len: usize,
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl&ltT&gt Mmap&ltT&gt {
+                        fn new(len: usize, read_only: bool) -> io::Result&ltSelf&gt {
+                            unsafe {
+                                // pad length to be a multiple of page size
+                                let page_size = system_page_size();
+                                let padded_len = len + page_size - len % page_size;
+
+                                let prot = if read_only {
+                                    PROT_READ
+                                } else {
+                                    PROT_READ | PROT_WRITE
+                                };
+
+                                let ptr = libc::mmap(
+                                    ptr::null_mut(),
+                                    padded_len,
+                                    prot,
+                                    MAP_PRIVATE | MAP_ANONYMOUS,
+                                    -1,
+                                    0,
+                                );
+                                if ptr == MAP_FAILED {
+                                    return Err(io::Error::last_os_error());
+                                }
+
+                                Ok(Mmap {
+                                    ptr: ptr as _,
+                                    len,
+                                    padded_len,
+                                })
+                            }
+                        }
+                    }
+                </code></pre>
             </section>
         </section>
     </div>

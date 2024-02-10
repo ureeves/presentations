@@ -63,3 +63,35 @@
 .virtual-machine {
     width: 60%;
 }
+
+.syscall-title {
+    font-family: SohneMono, monospace;
+    font-weight: 500;
+}
+
+.syscall-description {
+    font-weight: lighter;
+    font-style: italic;
+}
+
+.syscall-signals {
+    margin: auto;
+    text-align: justify;
+    width: 90%;
+}
+
+.syscall-signal {
+    padding-top: 1em;
+    font-family: SohneMono, monospace;
+    font-style: normal;
+    font-weight: 600;
+}
+
+.syscall-signal-description {
+    font-style: italic;
+    padding-left: 0.5em;
+}
+
+.stategy-item {
+    margin-bottom: 0.2em;
+}

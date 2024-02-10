@@ -68,8 +68,79 @@
                 <h3>Virtual Machine</h3>
                 <img class="virtual-machine" src="../images/virtual-machine-memory-state.svg" alt="vm-memory-state">
             </section>
+            <section data-transition="none slide-in">
+                <img class="virtual-machine" src="../images/single-contract-memory.svg" alt="single-contract-memory">
+            </section>
+            <section data-transition=none>
+                <img class="virtual-machine" src="../images/single-contract-memory-dirty.svg" alt="single-contract-memory-dirty">
+            </section>
+            <section data-transition=none>
+                <img class="virtual-machine" src="../images/single-contract-memory-dirty-os.svg" alt="single-contract-memory-dirty-os">
+            </section>
         </section>
+        <section>
+            <section>
+                <h3>Memory Tracking</h3>
+            </section>
+            <section>
+                <p class=syscall-title>mmap(), munmap()</p>
+                <p class=syscall-description>map or unmap files or devices into memory</p>
+                <pre><code data-trim data-noescape>
+                #include &ltsys/mman.h&gt
 
+                void *mmap(void addr[.length], size_t length, int prot,
+                           int flags, int fd, off_t offset);
+
+                int munmap(void addr[.length], size_t length);
+                </code></pre>
+            </section>
+            <section>
+                <div class=syscall-signals>
+                    <p>Use of a mapped region can result in these signals:</p>
+
+                    <p class=syscall-signal>SIGSEGV</p>
+                    <p class=syscall-signal-description>Attempted to write to a region mapped as read-only.</p>
+
+                    <p class=syscall-signal>SIGBUS</p>
+                    <p class=syscall-signal-description>
+                       Attempted access to a page of the buffer that lies
+                       beyond the end of the mapped file.
+                    </p>
+                </div>
+            </section>
+            <section>
+                <p class=syscall-title>sigaction()</p>
+                <p class=syscall-description>examine and change a signal action</p>
+                <pre><code data-trim data-noescape>
+                #include &ltsignal.h&gt
+
+                int sigaction(
+                    int signum,
+                    const struct sigaction *_Nullable restrict act,
+                    struct sigaction *_Nullable restrict oldact
+                );
+                </code></pre>
+            </section>
+            <section>
+                <p class=syscall-title>mprotect()</p>
+                <p class=syscall-description>set protection on a region of memory</p>
+                <pre><code data-trim data-noescape>
+                #include &ltsys/mman.h&gt
+
+                int mprotect(void addr[.len], size_t len, int prot);
+                </code></pre>
+            </section>
+            <section>
+                <h3>Memory Tracking</h3>
+                <h4 style="margin-bottom: 1em">Strategy</h4>
+                <ol>
+                    <li class="fragment stategy-item">Map memory region as read-only</li>
+                    <li class="fragment stategy-item">Catch write using SIGSEGV handler</li>
+                    <li class="fragment stategy-item">Mark memory region as written</li>
+                    <li class="fragment stategy-item">Allow writing to the memory region</li>
+                </ol>
+            </section>
+        </section>
     </div>
 </div>
 

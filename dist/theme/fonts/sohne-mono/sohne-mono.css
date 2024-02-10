@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'Sohne';
+    font-family: 'SohneMono';
     src: url('./sohne-mono-buch.eot');
     src: url('./sohne-mono-buch.eot?#iefix') format('embedded-opentype'),
     url('./sohne-mono-buch.woff2') format('woff2'),
@@ -10,7 +10,7 @@
 }
 
 @font-face {
-    font-family: 'Sohne';
+    font-family: 'SohneMono';
     src: url('./sohne-mono-kraftig.eot');
     src: url('./sohne-mono-kraftig.eot?#iefix') format('embedded-opentype'),
     url('./sohne-mono-kraftig.woff2') format('woff2'),

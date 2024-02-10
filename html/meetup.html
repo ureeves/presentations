@@ -94,11 +94,25 @@
                 int munmap(void addr[.length], size_t length);
                 </code></pre>
             </section>
-            <section>
+            <section data-transition=slide-in>
                 <div class=syscall-signals>
                     <p>Use of a mapped region can result in these signals:</p>
 
                     <p class=syscall-signal>SIGSEGV</p>
+                    <p class=syscall-signal-description>Attempted to write to a region mapped as read-only.</p>
+
+                    <p class=syscall-signal>SIGBUS</p>
+                    <p class=syscall-signal-description>
+                       Attempted access to a page of the buffer that lies
+                       beyond the end of the mapped file.
+                    </p>
+                </div>
+            </section>
+            <section data-transition=none>
+                <div class=syscall-signals>
+                    <p>Use of a mapped region can result in these signals:</p>
+
+                    <p class=syscall-signal-highlight>SIGSEGV</p>
                     <p class=syscall-signal-description>Attempted to write to a region mapped as read-only.</p>
 
                     <p class=syscall-signal>SIGBUS</p>

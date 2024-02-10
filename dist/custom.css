@@ -87,6 +87,14 @@
     font-weight: 600;
 }
 
+.syscall-signal-highlight {
+    padding-top: 1em;
+    font-family: SohneMono, monospace;
+    font-style: normal;
+    font-weight: 600;
+    color: #ca2143;
+}
+
 .syscall-signal-description {
     font-style: italic;
     padding-left: 0.5em;

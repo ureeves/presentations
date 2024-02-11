@@ -1,12 +1,13 @@
 use std::mem::MaybeUninit;
 use std::ops::{Deref, DerefMut};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::{Once, OnceLock, RwLock};
+use std::sync::{OnceLock, RwLock};
 use std::{io, mem, process, ptr, slice};
 
 use libc::{
-    c_int, sigaction, sigemptyset, siginfo_t, sigset_t, ucontext_t, MAP_ANONYMOUS, MAP_FAILED,
-    MAP_PRIVATE, PROT_READ, PROT_WRITE, SA_SIGINFO, _SC_PAGESIZE,
+    c_int, sigaction, sigemptyset, siginfo_t, sigset_t, ucontext_t,
+    MAP_ANONYMOUS, MAP_FAILED, MAP_PRIVATE, PROT_READ, PROT_WRITE, SA_SIGINFO,
+    SIGSEGV, _SC_PAGESIZE,
 };
 use rangemap::RangeMap;
 
@@ -87,9 +88,14 @@ struct MemoryInner {
 
 impl MemoryInner {
     fn new(len: usize) -> io::Result<Self> {
+        let bytes = Mmap::new(len, true)?;
+
+        let n_pages = bytes.n_bytes / system_page_size();
+        let dirty_page_bits = Mmap::new(n_pages, false)?;
+
         Ok(MemoryInner {
-            bytes: Mmap::new(len, true)?,
-            dirty_page_bits: Mmap::new(len / system_page_size(), false)?,
+            bytes,
+            dirty_page_bits,
         })
     }
 
@@ -100,9 +106,13 @@ impl MemoryInner {
         let page_index = (si_addr - start_addr) / page_size;
         let page_addr = start_addr + page_index * page_size;
 
-        let was_dirty = self.dirty_page_bits.as_mut()[page_index].fetch_or(true, Ordering::SeqCst);
+        let was_dirty = self.dirty_page_bits.as_mut()[page_index]
+            .fetch_or(true, Ordering::SeqCst);
 
-        if !was_dirty && libc::mprotect(page_addr as _, page_size, PROT_READ | PROT_WRITE) != 0 {
+        if !was_dirty
+            && libc::mprotect(page_addr as _, page_size, PROT_READ | PROT_WRITE)
+                != 0
+        {
             return Err(io::Error::last_os_error());
         }
 
@@ -110,11 +120,8 @@ impl MemoryInner {
     }
 }
 
-/// The type of the global memory map.
 type MemoryMap = RangeMap<usize, usize>;
 
-/// Global map from a memory address range to a pointer to its `MemoryInner`
-/// struct.
 fn global_memory_map() -> &'static RwLock<MemoryMap> {
     static MEMORY_MAP: OnceLock<RwLock<MemoryMap>> = OnceLock::new();
     MEMORY_MAP.get_or_init(|| RwLock::new(MemoryMap::new()))
@@ -202,11 +209,15 @@ impl DerefMut for Memory {
     }
 }
 
-unsafe fn segfault_handler(sig: c_int, info: *mut siginfo_t, ctx: *mut ucontext_t) {
-    with_map(move |global_map| {
+unsafe fn segfault_handler(
+    sig: c_int,
+    info: *mut siginfo_t,
+    ctx: *mut ucontext_t,
+) {
+    with_map(move |map| {
         let si_addr = (*info).si_addr() as usize;
 
-        if let Some(inner_ptr) = global_map.get(&si_addr) {
+        if let Some(inner_ptr) = map.get(&si_addr) {
             let inner = &mut *(*inner_ptr as *mut MemoryInner);
 
             if inner.process_segv(si_addr).is_err() {
@@ -220,7 +231,11 @@ unsafe fn segfault_handler(sig: c_int, info: *mut siginfo_t, ctx: *mut ucontext_
     });
 }
 
-unsafe fn call_old_action(sig: c_int, info: *mut siginfo_t, ctx: *mut ucontext_t) {
+unsafe fn call_old_action(
+    sig: c_int,
+    info: *mut siginfo_t,
+    ctx: *mut ucontext_t,
+) {
     let old_act = setup_action();
 
     // If SA_SIGINFO is set, the old action is a `fn(c_int, *mut siginfo_t, *mut
@@ -229,20 +244,19 @@ unsafe fn call_old_action(sig: c_int, info: *mut siginfo_t, ctx: *mut ucontext_t
         let act: fn(c_int) = mem::transmute(old_act.sa_sigaction);
         act(sig);
     } else {
-        let act: fn(c_int, *mut siginfo_t, *mut ucontext_t) = mem::transmute(old_act.sa_sigaction);
+        let act: fn(c_int, *mut siginfo_t, *mut ucontext_t) =
+            mem::transmute(old_act.sa_sigaction);
         act(sig, info, ctx);
     }
 }
 
-static SIGNAL_HANDLER: Once = Once::new();
-
 // Sets up [`segfault_handler`] to handle SIGSEGV, and returns the previous
 // action used to handle it, if any.
 fn setup_action() -> sigaction {
-    static OLD_ACTION: OnceLock<sigaction> = OnceLock::new();
+    unsafe {
+        static OLD_ACTION: OnceLock<sigaction> = OnceLock::new();
 
-    SIGNAL_HANDLER.call_once(|| {
-        unsafe {
+        *OLD_ACTION.get_or_init(|| {
             let mut sa_mask = MaybeUninit::<sigset_t>::uninit();
             sigemptyset(sa_mask.as_mut_ptr());
 
@@ -255,28 +269,26 @@ fn setup_action() -> sigaction {
             };
             let mut old_act = MaybeUninit::<sigaction>::uninit();
 
-            if libc::sigaction(libc::SIGSEGV, &act, old_act.as_mut_ptr()) != 0 {
+            if libc::sigaction(SIGSEGV, &act, old_act.as_mut_ptr()) != 0 {
                 process::exit(1);
             }
 
-            // On Apple Silicon for some reason SIGBUS is thrown instead of SIGSEGV.
-            // TODO should investigate properly
-            #[cfg(target_os = "macos")]
-            if libc::sigaction(libc::SIGBUS, &act, old_act.as_mut_ptr()) != 0 {
-                process::exit(2);
-            }
-
-            OLD_ACTION.get_or_init(move || old_act.assume_init());
-        }
-    });
-
-    *OLD_ACTION.get().unwrap()
+            old_act.assume_init()
+        })
+    }
 }
 
 #[test]
-fn read_write() {
-    let mut memory = Memory::new(4096).unwrap();
-    memory[0] = 42;
-    assert_eq!(memory[0], 42);
-    assert!(memory.0.dirty_page_bits.as_ref()[0].load(Ordering::SeqCst));
+fn read_write() -> io::Result<()> {
+    let mut memory = Memory::new(1000)?;
+
+    memory[42] = 42;
+
+    assert_eq!(memory[42], 42, "Memory will be written to correctly");
+    assert!(
+        memory.0.dirty_page_bits.as_ref()[0].load(Ordering::SeqCst),
+        "The first page will be marked as dirty"
+    );
+
+    Ok(())
 }

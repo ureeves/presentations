@@ -156,15 +156,14 @@
             </section>
         </section>
         <section>
-            <section>
-                <h3>Let's Code</h3>
-            </section>
+            <h3>Let's Code</h3>
+            <section></section>
             <section>
                 <pre><code lang=rust data-trim data-noescape>
                     struct Mmap&ltT&gt {
                         ptr: *mut T,
                         len: usize,
-                        padded_len: usize,
+                        n_bytes: usize,
                     }
                 </code></pre>
             </section>
@@ -173,9 +172,14 @@
                     impl&ltT&gt Mmap&ltT&gt {
                         fn new(len: usize, read_only: bool) -> io::Result&ltSelf&gt {
                             unsafe {
-                                // pad length to be a multiple of page size
+                                let mut n_bytes = len * mem::size_of::&ltT&gt();
                                 let page_size = system_page_size();
-                                let padded_len = len + page_size - len % page_size;
+
+                                // pad n_bytes to be a multiple of page size
+                                let n_bytes_rem = n_bytes % page_size;
+                                if n_bytes_rem != 0 {
+                                    n_bytes += page_size - n_bytes_rem;
+                                }
 
                                 let prot = if read_only {
                                     PROT_READ
@@ -185,7 +189,7 @@
 
                                 let ptr = libc::mmap(
                                     ptr::null_mut(),
-                                    padded_len,
+                                    n_bytes,
                                     prot,
                                     MAP_PRIVATE | MAP_ANONYMOUS,
                                     -1,
@@ -198,10 +202,265 @@
                                 Ok(Mmap {
                                     ptr: ptr as _,
                                     len,
-                                    padded_len,
+                                    n_bytes,
                                 })
                             }
                         }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl&ltT&gt Drop for Mmap&ltT&gt {
+                        fn drop(&mut self) {
+                            unsafe {
+                                libc::munmap(self.ptr as _, self.n_bytes);
+                            }
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl&ltT&gt AsRef<[T]> for Mmap&ltT&gt {
+                        fn as_ref(&self) -> &[T] {
+                            unsafe { slice::from_raw_parts(self.ptr, self.len) }
+                        }
+                    }
+
+                    impl&ltT&gt AsMut<[T]> for Mmap&ltT&gt {
+                        fn as_mut(&mut self) -> &mut [T] {
+                            unsafe { slice::from_raw_parts_mut(self.ptr, self.len) }
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    struct MemoryInner {
+                        bytes: Mmap&ltu8&gt,
+                        dirty_page_bits: Mmap&ltAtomicBool&gt,
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl MemoryInner {
+                        fn new(len: usize) -> io::Result&ltSelf&gt {
+                            let bytes = Mmap::new(len, true)?;
+
+                            let n_pages = bytes.n_bytes / system_page_size();
+                            let dirty_page_bits = Mmap::new(n_pages, false)?;
+
+                            Ok(MemoryInner {
+                                bytes,
+                                dirty_page_bits,
+                            })
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl MemoryInner {
+                        unsafe fn process_segv(&mut self, si_addr: usize) -> io::Result<()> {
+                            let start_addr = self.bytes.ptr as usize;
+
+                            let page_size = system_page_size();
+                            let page_index = (si_addr - start_addr) / page_size;
+                            let page_addr = start_addr + page_index * page_size;
+
+                            let was_dirty = self.dirty_page_bits.as_mut()[page_index]
+                                .fetch_or(true, Ordering::SeqCst);
+
+                            if !was_dirty
+                                && libc::mprotect(page_addr as _, page_size, PROT_READ | PROT_WRITE)
+                                    != 0
+                            {
+                                return Err(io::Error::last_os_error());
+                            }
+
+                            Ok(())
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    type MemoryMap = RangeMap&ltusize, usize&gt;;
+
+                    fn global_memory_map() -> &'static RwLock&ltMemoryMap&gt {
+                        static MEMORY_MAP: OnceLock&ltRwLock&ltMemoryMap&gt&gt = OnceLock::new();
+                        MEMORY_MAP.get_or_init(|| RwLock::new(MemoryMap::new()))
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    fn with_map&ltT, F&gt(f: F) -> T
+                    where
+                        F: FnOnce(&MemoryMap) -> T,
+                    {
+                        f(&global_memory_map().read().unwrap())
+                    }
+
+                    fn with_map_mut&ltT, F&gt(f: F) -> T
+                    where
+                        F: FnOnce(&mut MemoryMap) -> T,
+                    {
+                        f(&mut global_memory_map().write().unwrap())
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    unsafe fn segfault_handler(
+                        sig: c_int,
+                        info: *mut siginfo_t,
+                        ctx: *mut ucontext_t,
+                    ) {
+                        with_map(move |map| {
+                            let si_addr = (*info).si_addr() as usize;
+
+                            if let Some(inner_ptr) = map.get(&si_addr) {
+                                let inner = &mut *(*inner_ptr as *mut MemoryInner);
+
+                                if inner.process_segv(si_addr).is_err() {
+                                    call_old_action(sig, info, ctx);
+                                }
+
+                                return;
+                            }
+
+                            call_old_action(sig, info, ctx);
+                        });
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    fn setup_action() -> sigaction {
+                        unsafe {
+                            static OLD_ACTION: OnceLock&ltsigaction&gt = OnceLock::new();
+
+                            *OLD_ACTION.get_or_init(|| {
+                                let mut sa_mask = MaybeUninit::&ltsigset_t&gt::uninit();
+                                sigemptyset(sa_mask.as_mut_ptr());
+
+                                let act = sigaction {
+                                    sa_sigaction: segfault_handler as _,
+                                    sa_mask: sa_mask.assume_init(),
+                                    sa_flags: SA_SIGINFO,
+                                    #[cfg(target_os = "linux")]
+                                    sa_restorer: None,
+                                };
+                                let mut old_act = MaybeUninit::&ltsigaction&gt::uninit();
+
+                                if libc::sigaction(SIGSEGV, &act, old_act.as_mut_ptr()) != 0 {
+                                    process::exit(1);
+                                }
+
+                                old_act.assume_init()
+                            })
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    pub struct Memory(&'static mut MemoryInner);
+
+                    impl Memory {
+                        pub fn new(len: usize) -> io::Result&ltSelf&gt {
+                            with_map_mut(|map| {
+                                setup_action();
+
+                                let inner = MemoryInner::new(len)?;
+
+                                let inner_slice = inner.bytes.as_ref();
+
+                                let inner_begin = inner_slice.as_ptr() as usize;
+                                let inner_end = inner_begin + inner_slice.len();
+                                let inner_range = inner_begin..inner_end;
+
+                                let leaked_inner = Box::leak(Box::new(inner));
+                                map.insert(inner_range, leaked_inner as *const MemoryInner as _);
+
+                                Ok(Memory(leaked_inner))
+                            })
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl Drop for Memory {
+                        fn drop(&mut self) {
+                            with_map_mut(|map| {
+                                let inner_slice = self.0.bytes.as_ref();
+
+                                let inner_begin = inner_slice.as_ptr() as usize;
+                                let inner_end = inner_begin + inner_slice.len();
+                                let inner_range = inner_begin..inner_end;
+
+                                map.remove(inner_range);
+                                unsafe {
+                                    let _ = Box::from_raw(self.0);
+                                }
+                            });
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl AsRef<[u8]> for Memory {
+                        fn as_ref(&self) -> &[u8] {
+                            let inner = &*self.0;
+                            inner.bytes.as_ref()
+                        }
+                    }
+
+                    impl AsMut<[u8]> for Memory {
+                        fn as_mut(&mut self) -> &mut [u8] {
+                            let inner = &mut *self.0;
+                            inner.bytes.as_mut()
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    impl Deref for Memory {
+                        type Target = [u8];
+
+                        fn deref(&self) -> &Self::Target {
+                            self.as_ref()
+                        }
+                    }
+
+                    impl DerefMut for Memory {
+                        fn deref_mut(&mut self) -> &mut Self::Target {
+                            self.as_mut()
+                        }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    #[test]
+                    fn read_write() -> io::Result<()> {
+                        let mut memory = Memory::new(1000)?;
+
+                        memory[42] = 42;
+
+                        assert_eq!(memory[42], 42, "Memory will be written to correctly");
+                        assert!(
+                            memory.0.dirty_page_bits.as_ref()[0].load(Ordering::SeqCst),
+                            "The first page will be marked as dirty"
+                        );
+
+                        Ok(())
                     }
                 </code></pre>
             </section>

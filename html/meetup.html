@@ -27,8 +27,8 @@
                 <p>Segfaults ain't all bad</p>
             </section>
             <section>
-                <div id=intro>
-                    <div id=contact-info>
+                <div class=intro>
+                    <div class=contact-info>
                         <div class=contact-row>
                             Eduardo Leegwater Simões
                         </div>
@@ -42,12 +42,15 @@
                             <a class=contact-link href="https://github.com/ureeves" target="_blank">
                                 <img src="../images/github-logo.svg" alt="github">
                             </a>
+                            <a class=contact-link href="mailto:soft@ureeves.com" target="_blank">
+                                <img src="../images/email-round.svg" alt="email">
+                            </a>
                         </div>
                     </div>
 
-                    <div id=company-logos>
-                        <img id=contact-logo-dusk src="../images/dusk-logo.svg" alt="dusk">
-                        <img id=contact-logo-rust src="../images/rust-logo.png" alt="rust">
+                    <div class=company-logos>
+                        <img class=contact-logo-dusk src="../images/dusk-logo.svg" alt="dusk">
+                        <img class=contact-logo-rust src="../images/rust-logo.png" alt="rust">
                     </div>
                 </div>
             </section>
@@ -156,8 +159,14 @@
             </section>
         </section>
         <section>
-            <h3>Let's Code</h3>
-            <section></section>
+            <section>
+                <div class=lets-code>
+                    <h3 class=lets-code-title>Let's Code</h3>
+                    <a class=lets-code-link href="https://github.com/ureeves/presentations/tree/ureeves/code/meetup" target="_blank">
+                        <img src="../images/github-logo.svg" alt="github">
+                    </a>
+                </div>
+            </section>
             <section>
                 <pre><code lang=rust data-trim data-noescape>
                     struct Mmap&ltT&gt {
@@ -463,6 +472,127 @@
                         Ok(())
                     }
                 </code></pre>
+            </section>
+        </section>
+        <section>
+            <section><h3>Gotchas</h3></section>
+            <section>
+                <p class=syscall-title>Send and Sync</p>
+                <pre><code lang=rust data-trim data-noescape>
+                    /// This does not compile if `Send` isn't implemented for `Memory`
+                    #[test]
+                    fn send() -> io::Result<()> {
+                        use std::thread;
+                        let mut memory = Memory::new(1000)?;
+
+                        // error[E0277]
+                        thread::spawn(move || {
+                            memory[42] = 42;
+                        })
+                        .join()
+                        .unwrap();
+                        Ok(())
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <div>
+                    <p class=syscall-title>Send and Sync</p>
+                    <ul class=syscall-description>
+                        <li>A type is Send if it is safe to send it to another thread</li>
+                        <li>A type is Sync if it is safe to share between threads (T is Sync if and only if &T is Send)</li>
+                    </ul>
+                </div>
+                <div class=fragment>
+                    <p class="syscall-title" style="margin-top: 1em">Rules for references</p>
+                    <ul class=syscall-description>
+                        <li>At any given time, you can have either one mutable reference or any number of immutable references</li>
+                        <li>References must always be valid</li>
+                    </ul>
+                </div>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    unsafe impl Send for Memory {}
+                    unsafe impl Sync for Memory {}
+                </code></pre>
+            </section>
+            <section>
+                <pre><code lang=rust data-trim data-noescape>
+                    /// This is available on slices, but (maybe fortunately) it is
+                    /// unstable. Luckily, we used atomics to track dirty pages.
+                    pub fn split_at_mut(&mut self, mid: usize) -> (&mut [T], &mut [T]);
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Use Cases</h3>
+                <ul>
+                    <li class="fragment stategy-item">Keep track of written pages</li>
+                    <li class="fragment stategy-item">Load page content dynamically on reads</li>
+                    <li class="fragment stategy-item">Moving back in time with snapshots</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Useful Links</h3>
+                <ul class=useful-links-list>
+                    <li><a href="https://docs.rs/crumbles" target="_blank">crumbles</a> - implementing a version of memory tracking, developed for...</li>
+                    <li><a href="https://docs.rs/piecrust" target="_blank">piecrust</a> - Dusk's VM implementation</li>
+                    <li><a href="https://docs.rs/piecrust" target="_blank">libc</a> - FFI bindings to platform stuff</li>
+                    <li>
+                        <a href="https://man7.org/linux/man-pages/man2/mmap.2.html" target="_blank">mmap</a>,
+                        <a href="https://man7.org/linux/man-pages/man2/mprotect.2.html" target="_blank">mprotect</a>, and
+                        <a href="https://man7.org/linux/man-pages/man2/sigaction.2.html" target="_blank">sigaction</a>
+                        man pages
+                    </li>
+                </ul>
+            </section>
+            <section>
+                <h3>Thank You!</h3>
+                <ul class=useful-links-list>
+                    <li><a href="https://docs.rs/crumbles" target="_blank">crumbles</a> - implementing a version of memory tracking, developed for...</li>
+                    <li><a href="https://docs.rs/piecrust" target="_blank">piecrust</a> - Dusk's VM implementation</li>
+                    <li><a href="https://docs.rs/piecrust" target="_blank">libc</a> - FFI bindings to platform stuff</li>
+                    <li>
+                        <a href="https://man7.org/linux/man-pages/man2/mmap.2.html" target="_blank">mmap</a>,
+                        <a href="https://man7.org/linux/man-pages/man2/mprotect.2.html" target="_blank">mprotect</a>, and
+                        <a href="https://man7.org/linux/man-pages/man2/sigaction.2.html" target="_blank">sigaction</a>
+                        man pages
+                    </li>
+                </ul>
+            </section>
+            <section>
+                <div style="display: flex; justify-content: left; margin-bottom: 1em">
+                    <h3>Thank You!</h3>
+                </div>
+
+                <div class=intro>
+                    <div class=contact-info>
+                        <div class=contact-row>
+                            Eduardo Leegwater Simões
+                        </div>
+                        <div class=contact-row>
+                            Software Engineer
+                        </div>
+                        <div class=contact-row>
+                            <a class=contact-link href="https://www.linkedin.com/in/eduardo-leegwater-sim%C3%B5es" target="_blank">
+                                <img src="../images/linkedin-logo.svg" alt="linkedin">
+                            </a>
+                            <a class=contact-link href="https://github.com/ureeves" target="_blank">
+                                <img src="../images/github-logo.svg" alt="github">
+                            </a>
+                            <a class=contact-link href="mailto:soft@ureeves.com" target="_blank">
+                                <img src="../images/email-round.svg" alt="email">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class=company-logos>
+                        <img class=contact-logo-dusk src="../images/dusk-logo.svg" alt="dusk">
+                        <img class=contact-logo-rust src="../images/rust-logo.png" alt="rust">
+                    </div>
+                </div>
             </section>
         </section>
     </div>

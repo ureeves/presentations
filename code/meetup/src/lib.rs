@@ -143,6 +143,9 @@ where
 
 pub struct Memory(&'static mut MemoryInner);
 
+unsafe impl Send for Memory {}
+unsafe impl Sync for Memory {}
+
 impl Drop for Memory {
     fn drop(&mut self) {
         with_map_mut(|map| {
@@ -289,6 +292,23 @@ fn read_write() -> io::Result<()> {
         memory.0.dirty_page_bits.as_ref()[0].load(Ordering::SeqCst),
         "The first page will be marked as dirty"
     );
+
+    Ok(())
+}
+
+/// This does not compile if `Send` isn't implemented for `Memory`
+#[test]
+fn send() -> io::Result<()> {
+    use std::thread;
+
+    let mut memory = Memory::new(1000)?;
+
+    // error[E0277]
+    thread::spawn(move || {
+        memory[42] = 42;
+    })
+    .join()
+    .unwrap();
 
     Ok(())
 }
